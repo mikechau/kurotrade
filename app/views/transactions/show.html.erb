@@ -1,0 +1,70 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Group:</b>
+  <%= @transaction.group_id %>
+</p>
+
+<p>
+  <b>Trade:</b>
+  <%= @transaction.trade_id %>
+</p>
+
+<p>
+  <b>Stock symbol:</b>
+  <%= @transaction.stock_symbol %>
+</p>
+
+<p>
+  <b>Trade date:</b>
+  <%= @transaction.trade_date %>
+</p>
+
+<p>
+  <b>Settle date:</b>
+  <%= @transaction.settle_date %>
+</p>
+
+<p>
+  <b>Quantity:</b>
+  <%= @transaction.quantity %>
+</p>
+
+<p>
+  <b>Price:</b>
+  <%= @transaction.price %>
+</p>
+
+<p>
+  <b>Commission:</b>
+  <%= @transaction.commission %>
+</p>
+
+<p>
+  <b>Fees:</b>
+  <%= @transaction.fees %>
+</p>
+
+<p>
+  <b>Interest:</b>
+  <%= @transaction.interest %>
+</p>
+
+<p>
+  <b>Total value:</b>
+  <%= @transaction.total_value %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @transaction.description %>
+</p>
+
+<p>
+  <b>Broker:</b>
+  <%= @transaction.broker %>
+</p>
+
+
+<%= link_to 'Edit', edit_transaction_path(@transaction) %> |
+<%= link_to 'Back', transactions_path %>

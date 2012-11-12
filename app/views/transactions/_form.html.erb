@@ -1,0 +1,69 @@
+<%= form_for(@transaction) do |f| %>
+  <% if @transaction.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@transaction.errors.count, "error") %> prohibited this transaction from being saved:</h2>
+
+      <ul>
+      <% @transaction.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :group_id %><br />
+    <%= f.number_field :group_id %>
+  </div>
+  <div class="field">
+    <%= f.label :trade_id %><br />
+    <%= f.text_field :trade_id %>
+  </div>
+  <div class="field">
+    <%= f.label :stock_symbol %><br />
+    <%= f.text_field :stock_symbol %>
+  </div>
+  <div class="field">
+    <%= f.label :trade_date %><br />
+    <%= f.date_select :trade_date %>
+  </div>
+  <div class="field">
+    <%= f.label :settle_date %><br />
+    <%= f.date_select :settle_date %>
+  </div>
+  <div class="field">
+    <%= f.label :quantity %><br />
+    <%= f.number_field :quantity %>
+  </div>
+  <div class="field">
+    <%= f.label :price %><br />
+    <%= f.text_field :price %>
+  </div>
+  <div class="field">
+    <%= f.label :commission %><br />
+    <%= f.text_field :commission %>
+  </div>
+  <div class="field">
+    <%= f.label :fees %><br />
+    <%= f.text_field :fees %>
+  </div>
+  <div class="field">
+    <%= f.label :interest %><br />
+    <%= f.text_field :interest %>
+  </div>
+  <div class="field">
+    <%= f.label :total_value %><br />
+    <%= f.text_field :total_value %>
+  </div>
+  <div class="field">
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </div>
+  <div class="field">
+    <%= f.label :broker %><br />
+    <%= f.text_field :broker %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

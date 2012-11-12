@@ -1,0 +1,31 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  group_id: 1
+  trade_id: MyString
+  stock_symbol: MyString
+  trade_date: 2012-11-12
+  settle_date: 2012-11-12
+  quantity: 1
+  price: 1.5
+  commission: 1.5
+  fees: 1.5
+  interest: 1.5
+  total_value: 1.5
+  description: MyString
+  broker: MyString
+
+two:
+  group_id: 1
+  trade_id: MyString
+  stock_symbol: MyString
+  trade_date: 2012-11-12
+  settle_date: 2012-11-12
+  quantity: 1
+  price: 1.5
+  commission: 1.5
+  fees: 1.5
+  interest: 1.5
+  total_value: 1.5
+  description: MyString
+  broker: MyString
