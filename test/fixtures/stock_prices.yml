@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  symbol: MyString
+  date: 2012-11-12
+  close_price: 1.5
+
+two:
+  symbol: MyString
+  date: 2012-11-12
+  close_price: 1.5
