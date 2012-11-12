@@ -1,4 +1,6 @@
 Kurotrade::Application.routes.draw do
+  resources :portfolios
+
   resources :groups
 
   resources :users
