@@ -17,4 +17,4 @@
 # Ignore doc files
 /doc/allsymbols.csv
 /doc/test-file1.csv
-/doc/*
+/doc/*.*
