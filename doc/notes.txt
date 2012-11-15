@@ -1,0 +1,12 @@
+rails g migration add_public_and_private_to_document public:string private:string
+
+Rake db notes:
+
+rake db:drop:all 
+rake db:create:all
+rake db:migrate 
+
+
+rake db:rollback = rollback to last migration
+rake db:reset = drop database, recreate it and load current schema 
+

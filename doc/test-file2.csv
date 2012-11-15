@@ -1,0 +1,10 @@
+Symbol;Quantity;Price;ActionNameUS;TradeDate;SettledDate;Interest;Amount;Commission;Fees;CUSIP;Description;ActionId;TradeNumber;RecordType;TaxLotNumber
+Cash;0;0;Credit Interest;9/30/2012;;0;0.01;0;0;         ;CREDIT  INTEREST 30 DAYS @ .01% AVERAGE CREDIT BALANCE  666.91 APY EARNED .02%;4;;Financial;
+GLW;0;0;Dividend;9/28/2012;;0;5.63;0;0;CUSIP1;CORNING INC DIVIDEND ON 75 SHARES OF GLW                      @ .07500;2;;Financial;
+MCP;70;13.48;Buy;9/14/2012;9/19/2012;0;-950.6;-7;0;CUSIP2;BOUGHT 70 SHARES OF MCP AT $13.48;1;;Trade;ABC
+Cash;0;0;Credit Interest;8/31/2012;;0;0.01;0;0;         ;CREDIT  INTEREST 31 DAYS @ .01% AVERAGE CREDIT BALANCE  1;046.58 APY EARNED .01%;4;;Financial
+Cash;0;0;Credit Interest;7/31/2012;;0;0.01;0;0;         ;CREDIT  INTEREST 31 DAYS @ .01% AVERAGE CREDIT BALANCE  1;109.83 APY EARNED .01%;4;;Financial
+Cash;0;0;Credit Interest;6/30/2012;;0;0.02;0;0;         ;CREDIT  INTEREST 30 DAYS @ .01% AVERAGE CREDIT BALANCE  1;881.86 APY EARNED .01%;4;;Financial
+GLW;0;0;Dividend;6/29/2012;;0;5.63;0;0;CUSIP1;CORNING INC DIVIDEND ON 75 SHARES OF GLW                      @ .07500;2;;Financial;
+PT;228;4.27;Buy;6/28/2012;7/3/2012;0;-980.56;-7;0;CUSIP3;BOUGHT 228 SHARES OF PT AT $4.27;1;;Trade;ABC1
+Cash;0;0;Journal;6/7/2012;;0;700;0;0;         ;DEPOSIT CKS;9;;Financial;
