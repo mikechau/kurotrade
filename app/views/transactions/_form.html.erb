@@ -67,9 +67,3 @@
     <%= f.submit %>
   </div>
 <% end %>
-
-<%= form_tag transactions_url, :multipart => true do %>
-  <%= label_tag :file %> 
-  <%= file_field_tag :file %>
-  <%= submit_tag %>
-<% end %>
