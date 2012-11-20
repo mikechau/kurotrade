@@ -1,3 +1,4 @@
+require 'csv'
 class TransactionsController < ApplicationController
   # GET /transactions
   # GET /transactions.json
@@ -41,6 +42,39 @@ class TransactionsController < ApplicationController
   # POST /transactions.json
   def create
     @transaction = Transaction.new(params[:transaction])
+
+    if request.post? && params[:file].present?
+      infile = params[:file].tempfile
+
+      Transaction.delete_all
+
+      CSV.foreach(infile, :headers => true, :col_sep => ',') do |row|
+
+        txn = Transaction.new
+
+        txn.update_attributes(
+          :stock_symbol => row.to_hash["Symbol"], #Row 1
+          :quantity => row.to_hash["Quantity"], #Row 2
+          :price => row.to_hash["Price"], #Row 3
+          :action_type => row.to_hash["ActionNameUS"], #Row 4
+          :trade_date => row.to_hash["TradeDate"], #Row 5
+          :settle_date => row.to_hash["SettledDate"], #Row 6
+          :interest => row.to_hash["Interest"], #Row 7
+          :total_value => row.to_hash["Amount"], #Row 8
+          :commission => row.to_hash["Commission"], #Row 9
+          :fees => row.to_hash["Fees"], #Row 10
+          :cusip => row.to_hash["CUISP"], #Row 11
+          :description => row.to_hash["Description"], #Row 12
+          :action_id => row.to_hash["ActionId"], #Row 13
+          :trade_id => row.to_hash["TradeNumber"], #Row 14
+          :record_type => row.to_hash["RecordType"], #Row 15
+          :broker => "Scottrade", #Manual / Future Drop Down menu?
+          :input_method => "CSV", #2 options CSV or MANUAL
+          :group_id => "1", #a test, set by page->cookie?
+          :user_id => "1" #a test, set by user.id->cookie?
+        )
+      end
+    end
 
     respond_to do |format|
       if @transaction.save
