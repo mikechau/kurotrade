@@ -3,7 +3,6 @@ class Transaction < ActiveRecord::Base
 
   belongs_to :group
 
-
   def self.convert_to_date(str)
   # 1/12/2012 - initial
   # 2012/12/1 - conversion

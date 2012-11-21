@@ -4,7 +4,7 @@ class TransactionsController < ApplicationController
   # GET /transactions
   # GET /transactions.json
   def index
-    @transactions = Transaction.all
+    @transactions = Transaction.order(:trade_date)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -105,9 +105,9 @@ class TransactionsController < ApplicationController
 
       CSV.foreach(infile, :headers => true, :col_sep => ',') do |row| #start_3
 
-            puts row.to_hash["Amount"].class
-
         txn = Transaction.new
+
+        #binding.pry
 
         if row.to_hash["Symbol"] != nil || row.to_hash["Quantity"] != nil || row.to_hash["Price"] != nil || row.to_hash["ActionNameUS"] || row.to_hash["TradeDate"] != nil || row.to_hash["SettledDate"] != nil || row.to_hash["Interest"] != nil || row.to_hash["Amount"] != nil || row.to_hash["Commission"] != nil || row.to_hash["Fees"] != nil || row.to_hash["CUISP"] != nil || row.to_hash["Description"] != nil || row.to_hash["ActionId"] != nil || row.to_hash["TradeNumber"] != nil || row.to_hash["RecordType"] != nil
             
