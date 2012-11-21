@@ -1,5 +1,7 @@
 <h1>Listing transactions</h1>
 
+<%= @date %>
+
 <table>
   <tr>
     <th>Group</th>
@@ -32,7 +34,7 @@
     <td><%= transaction.commission %></td>
     <td><%= transaction.fees %></td>
     <td><%= transaction.interest %></td>
-    <td><%= transaction.total_value %></td>
+    <td><%= number_with_delimiter(transaction.total_value, :precision => 2, :delimiter => ',') %></td>
     <td><%= transaction.description %></td>
     <td><%= transaction.broker %></td>
     <td><%= link_to 'Show', transaction %></td>

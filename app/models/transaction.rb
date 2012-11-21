@@ -3,6 +3,19 @@ class Transaction < ActiveRecord::Base
 
   belongs_to :group
 
+
+  def self.convert_to_date(str)
+  # 1/12/2012 - initial
+  # 2012/12/1 - conversion
+  	if str != nil
+    	date_array = str.split("/")
+    	converted_date = Date.parse(("#{date_array[2]}/#{date_array[0]}/#{date_array[1]}").to_s)
+    	return converted_date
+  	else
+    	return 'N/A'
+  	end
+	end
+
 	# def scottrade_csv_parser(file)
 
  #  	CSV.foreach(file, :headers => true, :col_sep => ',') do |row|
