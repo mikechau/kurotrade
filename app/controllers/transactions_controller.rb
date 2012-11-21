@@ -1,4 +1,5 @@
 require 'csv'
+require 'date'
 class TransactionsController < ApplicationController
   # GET /transactions
   # GET /transactions.json
@@ -82,41 +83,60 @@ class TransactionsController < ApplicationController
     end
   end
 
-  def scottrade_csv_parser #end_1
-    if request.post? && params[:file].present? #end_2
+
+# def convert_to_date(str)
+#   # 1/12/2012 - initial
+#   # 2012/12/1 - conversion
+#   if str != nil
+#     date_array = str.split("/")
+#     converted_date = Date.parse(("#{date_array[2]}/#{date_array[0]}/#{date_array[1]}").to_s)
+#     return converted_date
+#   else
+#     return 'N/A'
+#   end
+# end
+
+  #CSV PARSING
+  def scottrade_csv_parser #start_1
+    if request.post? && params[:file].present? #start_2
       infile = params[:file].tempfile
 
       Transaction.delete_all
 
-      CSV.foreach(infile, :headers => true, :col_sep => ',') do |row| #end_3
+      CSV.foreach(infile, :headers => true, :col_sep => ',') do |row| #start_3
+
+            puts row.to_hash["Amount"].class
 
         txn = Transaction.new
 
-        txn.update_attributes(
-          :stock_symbol => row.to_hash["Symbol"], #Row 1
-          :quantity => row.to_hash["Quantity"], #Row 2
-          :price => row.to_hash["Price"], #Row 3
-          :action_type => row.to_hash["ActionNameUS"], #Row 4
-          :trade_date => row.to_hash["TradeDate"], #Row 5
-          :settle_date => row.to_hash["SettledDate"], #Row 6
-          :interest => row.to_hash["Interest"], #Row 7
-          :total_value => row.to_hash["Amount"], #Row 8
-          :commission => row.to_hash["Commission"], #Row 9
-          :fees => row.to_hash["Fees"], #Row 10
-          :cusip => row.to_hash["CUISP"], #Row 11
-          :description => row.to_hash["Description"], #Row 12
-          :action_id => row.to_hash["ActionId"], #Row 13
-          :trade_id => row.to_hash["TradeNumber"], #Row 14
-          :record_type => row.to_hash["RecordType"], #Row 15
-          :broker => "Scottrade", #Manual / Future Drop Down menu?
-          :input_method => "CSV", #2 options CSV or MANUAL
-          :group_id => "1", #a test, set by page->cookie?
-          :user_id => "1" #a test, set by user.id->cookie?
-        )
+        if row.to_hash["Symbol"] != nil || row.to_hash["Quantity"] != nil || row.to_hash["Price"] != nil || row.to_hash["ActionNameUS"] || row.to_hash["TradeDate"] != nil || row.to_hash["SettledDate"] != nil || row.to_hash["Interest"] != nil || row.to_hash["Amount"] != nil || row.to_hash["Commission"] != nil || row.to_hash["Fees"] != nil || row.to_hash["CUISP"] != nil || row.to_hash["Description"] != nil || row.to_hash["ActionId"] != nil || row.to_hash["TradeNumber"] != nil || row.to_hash["RecordType"] != nil
+            
+            txn.update_attributes(
+              :stock_symbol => row.to_hash["Symbol"], #Row 1
+              :quantity => row.to_hash["Quantity"], #Row 2
+              :price => row.to_hash["Price"], #Row 3
+              :action_type => row.to_hash["ActionNameUS"], #Row 4
+              :trade_date => Transaction.convert_to_date(row.to_hash["TradeDate"]),
+              :settle_date => Transaction.convert_to_date(row.to_hash["SettledDate"]), #Row 6
+              :interest => row.to_hash["Interest"], #Row 7
+              :total_value => row.to_hash["Amount"].gsub(",", ""), #Row 8
+              :commission => row.to_hash["Commission"], #Row 9
+              :fees => row.to_hash["Fees"], #Row 10
+              :cusip => row.to_hash["CUISP"], #Row 11
+              :description => row.to_hash["Description"], #Row 12
+              :action_id => row.to_hash["ActionId"], #Row 13
+              :trade_id => row.to_hash["TradeNumber"], #Row 14
+              :record_type => row.to_hash["RecordType"], #Row 15
+              :broker => "Scottrade", #Manual / Future Drop Down menu?
+              :input_method => "CSV", #2 options CSV or MANUAL
+              :group_id => "1", #a test, set by page->cookie?
+              :user_id => "1" #a test, set by user.id->cookie?
+            )
+        end
       end #end_3
       redirect_to transactions_url
     else
-      redirect_to new_transaction_url, notice: 'ERROR: Try Again!'
+      redirect_to new_transaction_url, notice: 'Error: Select a File!'
     end #end_2
 
     #*** Some sort of validation to make sure Transaction is updated
