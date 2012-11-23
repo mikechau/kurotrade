@@ -103,7 +103,7 @@ class TransactionsController < ApplicationController
 
       Transaction.delete_all
 
-      CSV.foreach(infile, :headers => true, :col_sep => ',') do |row| #start_3
+      CSV.foreach(infile, :headers => true, :col_sep => ';') do |row| #start_3
 
         txn = Transaction.new
 
