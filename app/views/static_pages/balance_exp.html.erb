@@ -1,0 +1,167 @@
+<h1> Transaction History </h1>
+
+<div id="nav_chart"></div>
+
+<hr />
+<p>Broker: <%= @transactions.first.broker %>
+<p>INITIAL DEPOSIT: <%= cash_balance = 0.0 %> || INITIAL NAV UNITS: <%= nav_units = 1000.00 %></p>
+
+<hr />
+
+<table>
+  <tr>
+    <th>Group</th>
+    <th>User</th>
+<!--     <th>Trade</th> TradeNumber is blank!-->
+    <th>Ticker</th><!-- rename Stock Symbol to ticker -->
+    <th>Trade date</th>
+<!--     <th>Settle date</th> not needed-->
+    <th>Shares</th>
+    <th>Book Price</th>
+    <th>Close Price</th>
+    <th>Commission</th>
+<!--    <th>Fees</th> not needed-->
+<!--     <th>Interest</th> not needed -->
+    <th>Cost</th>
+    <th>Action</th>
+    <th>Description</th>
+<!--    <th>Broker</th> don't need -->
+	<th>Cash Balance</th>
+    <th>Stock Balance (Book)</th>
+    <th>Stock Balance (Market)</th>
+    <th>Account Balance (Book)</th>
+    <th>Account Balance (Market)</th>
+	<th>NAV UNITS</th>
+	<th>NAV per Unit</th>
+	<th>Net Asset Value</th>
+    <th>NAV Return</th>
+    <th>Transaction Return</th>
+<!--     <th></th>
+    <th></th>
+    <th></th> -->
+  </tr>
+
+
+  <% stock_value = 0.0 %>
+  <% eod_value = 0.0 %>
+  <% book_acc = 0.0 %>
+  <% mrkt_acc = 0.0 %>
+  <% initial_nav_per_unit = 0.0 %>
+  <% transaction_return = 0 %>
+  <% total_transactions = @transactions.count %>
+  <% nav_per_unit_array = [] %>
+  <% nav_dates = [] %>
+
+<% @transactions.each_with_index do |transaction, index| %>
+  <tr>
+    <td><%= transaction.group.name %></td><!-- show group name -->
+<!--     <td><%#= transaction.user_id %></td> switch to display username-->
+		<td><%= User.find_by_id(transaction.user_id).username %></td>
+<!--     <td><%#= transaction.trade_id %></td> -->
+    <td><%= transaction.stock_symbol %></td>
+    <% nav_dates << transaction.trade_date %>
+    <td><%= transaction.trade_date %></td>
+<!--     <td><%#= transaction.settle_date %></td> -->
+    <td><%= transaction.quantity %></td>
+    <td><%= transaction.price %></td>
+    <% dum_market = transaction.price * 1.00 %>
+    <td><%= number_with_precision(dum_market, :precision => 2, :delimiter => ',')%></td>
+    <td><%= transaction.commission %></td>
+<!--     <td><%#= transaction.fees %></td> -->
+<!--     <td><%#= transaction.interest %></td> -->
+    <td><%= number_with_delimiter(transaction.total_value, :precision => 2, :delimiter => ',') %></td>
+    <td><%= transaction.action_type %></td>
+    <td><%= transaction.description %></td>
+<!--     <td><%#= transaction.broker %></td> -->
+	<% cash_balance += transaction.total_value %>
+	<td><%= number_with_precision(cash_balance, :precision => 2, :delimiter => ',') %></td>
+
+<!-- Book Value for Stocks -->
+    <% if transaction.action_type == 'Buy' %>
+        <% stock_value += transaction.total_value.abs %>
+        <td><%= number_with_precision(stock_value, :precision => 2, :delimiter => ',') %></td>
+    <% elsif transaction.action_type == 'Sell' %>
+        <% book_price = @transactions.where(:action_type => 'Buy').find_by_stock_symbol(transaction.stock_symbol).price %>
+        <% stock_value -= (book_price * transaction.quantity.abs) #need to be original price %> 
+        <td><%= number_with_precision(stock_value, :precision => 2, :delimiter => ',') %></td>
+    <% else %>
+        <td><%= number_with_precision(stock_value, :precision => 2, :delimiter => ',') %></td>
+    <% end %>
+
+<!-- Market Value for Stocks --> 
+    <% if transaction.action_type == 'Buy' %>
+        <% eod_transaction = (transaction.quantity * dum_market) + transaction.commission.abs %>
+        <% eod_value += eod_transaction %>
+        <td><%= number_with_precision(eod_value, :precision => 2, :delimiter => ',') %></td>
+    <% elsif transaction.action_type == 'Sell' %>
+        <% book_price = @transactions.where(:action_type => 'Buy').find_by_stock_symbol(transaction.stock_symbol).price %>
+        <% eod_value -= (book_price * transaction.quantity.abs) %> 
+        <td><%= number_with_precision(eod_value, :precision => 2, :delimiter => ',') %></td>
+    <% else %>
+        <td><%= number_with_precision(eod_value, :precision => 2, :delimiter => ',') %></td>
+    <% end %>
+
+<!-- book total acc balance -->
+        <% book_acc = cash_balance + stock_value %>
+    <td><%= number_with_precision(book_acc, :precision => 2, :delimiter => ',') %></td>
+
+<!-- market total acc balance -->
+        <% mrkt_acc = cash_balance + eod_value %>
+    <td><%= number_with_precision(mrkt_acc, :precision => 2, :delimiter => ',') %></td>
+<!-- nav units w/ market value (eod data)-->
+    <% if transaction.description == 'PAYMENT ON ACCOUNT' %>
+        <% nav_units = nav_units - ( (-transaction.total_value) / ((cash_balance + eod_value - transaction.total_value) / nav_units) ) %>
+        <td><%= number_with_precision(nav_units, :precision => 2, :delimiter => ',') %></td>
+    <% elsif transaction.description == 'DEPOSIT CKS' && index != 0 %>
+        <% nav_units = nav_units + ( (transaction.total_value) / ((cash_balance + eod_value - transaction.total_value) / nav_units) ) %>
+        <td><%= number_with_precision(nav_units, :precision => 2, :delimiter => ',') %></td>
+    <% else %>
+        <td><%= number_with_precision(nav_units, :precision => 2, :delimiter => ',') %></td>
+    <% end %>
+    <% nav_per_unit = mrkt_acc / nav_units %>
+    <% nav_per_unit_array << nav_per_unit %>
+	<td><%= number_with_precision(nav_per_unit, :precision => 2, :delimiter => ',') %></td><!-- nav per unit-->
+    <% nav = nav_units * nav_per_unit %>
+	<td><%= number_with_precision(nav, :precision => 2, :delimiter => ',') %></td><!-- net asset value -->
+    <% if index == 0 %>
+        <% initial_nav_per_unit = nav_per_unit %>
+    <% end %>
+    <% return_nav = ((nav_per_unit - initial_nav_per_unit) / initial_nav_per_unit) * 100 %>
+    <td><%= number_with_precision(return_nav, :precision => 2) %>%</td>
+    <% if index > 0 %>
+        <% trans_return = (nav_per_unit_array[index] - nav_per_unit_array[index-1]) / nav_per_unit_array[index-1] * 100 %>
+    <% else %>
+        <% trans_return = 0.0 %>
+    <% end %>
+    <td><%= number_with_precision(trans_return, :precision => 2) %>%</td>
+  </tr>
+<% end %>
+</table>
+
+<hr />
+
+<% keys = nav_dates %>
+<% vals = nav_per_unit_array %>
+
+<% nav_hash = Hash[keys.zip(vals)] %>
+
+<%= nav_hash %>
+
+
+<script type="text/javascript">
+Morris.Line({
+  element: 'nav_chart',
+  data: [
+    {y: '2012', a: 100},
+    {y: '2011', a: 75},
+    {y: '2010', a: 50},
+    {y: '2009', a: 75},
+    {y: '2008', a: 50},
+    {y: '2007', a: 75},
+    {y: '2006', a: 100}
+  ],
+  xkey: 'y',
+  ykeys: ['a'],
+  labels: ['Series A']
+});
+</script>
