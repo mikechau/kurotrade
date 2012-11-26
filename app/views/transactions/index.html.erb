@@ -3,6 +3,7 @@
 <table>
   <tr>
     <th>Group</th>
+    <th>User ID</th>
     <th>Trade</th>
     <th>Stock symbol</th>
     <th>Trade date</th>
@@ -23,6 +24,7 @@
 <% @transactions.each do |transaction| %>
   <tr>
     <td><%= transaction.group_id %></td>
+    <td><%= transaction.user_id %></td>
     <td><%= transaction.trade_id %></td>
     <td><%= transaction.stock_symbol %></td>
     <td><%= transaction.trade_date %></td>
