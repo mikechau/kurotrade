@@ -1,5 +1,11 @@
 <h1> Transaction History </h1>
 
+<style>
+#nav_chart {
+        background-color: #EEE;
+}
+</style>
+
 <div id="nav_chart"></div>
 
 <hr />
@@ -51,6 +57,7 @@
   <% total_transactions = @transactions.count %>
   <% nav_per_unit_array = [] %>
   <% nav_dates = [] %>
+  <% nav_calc = [] %>
 
 <% @transactions.each_with_index do |transaction, index| %>
   <tr>
@@ -59,7 +66,7 @@
 		<td><%= User.find_by_id(transaction.user_id).username %></td>
 <!--     <td><%#= transaction.trade_id %></td> -->
     <td><%= transaction.stock_symbol %></td>
-    <% nav_dates << transaction.trade_date %>
+    <% nav_dates << {:date => transaction.trade_date} %>
     <td><%= transaction.trade_date %></td>
 <!--     <td><%#= transaction.settle_date %></td> -->
     <td><%= transaction.quantity %></td>
@@ -122,6 +129,7 @@
     <% nav_per_unit_array << nav_per_unit %>
 	<td><%= number_with_precision(nav_per_unit, :precision => 2, :delimiter => ',') %></td><!-- nav per unit-->
     <% nav = nav_units * nav_per_unit %>
+    <% nav_calc << {:nav => nav } %>
 	<td><%= number_with_precision(nav, :precision => 2, :delimiter => ',') %></td><!-- net asset value -->
     <% if index == 0 %>
         <% initial_nav_per_unit = nav_per_unit %>
@@ -140,28 +148,32 @@
 
 <hr />
 
-<% keys = nav_dates %>
-<% vals = nav_per_unit_array %>
+<% new_array = [] %>
+<% nav_dates.each_with_index do |date, index| %>
+    <% new_array << {:date => nav_dates[index][:date], :nav => nav_calc[index][:nav]} %>
+<% end %>
 
-<% nav_hash = Hash[keys.zip(vals)] %>
-
-<%= nav_hash %>
-
+<%= new_array %>
+<% new_array_count = new_array.count %>
 
 <script type="text/javascript">
 Morris.Line({
   element: 'nav_chart',
   data: [
-    {y: '2012', a: 100},
-    {y: '2011', a: 75},
-    {y: '2010', a: 50},
-    {y: '2009', a: 75},
-    {y: '2008', a: 50},
-    {y: '2007', a: 75},
-    {y: '2006', a: 100}
+    <% new_array.each_with_index do |array, index| %>
+        <% if index != new_array_count %>
+            {y: '<%= array[:date] %>', a: <%= array[:nav] %>},
+        <% else %>
+            {y: '<%= array[:date] %>', a: <%= array[:nav] %>}
+        <% end %>
+    <% end %>
   ],
   xkey: 'y',
   ykeys: ['a'],
-  labels: ['Series A']
+  labels: ['Net Asset Value'],
+  preUnits: '$',
+  numLines: 20,
+  ymin: 'auto',
+  gridTextSize: 20
 });
 </script>
