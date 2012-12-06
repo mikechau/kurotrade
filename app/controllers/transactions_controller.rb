@@ -1,5 +1,7 @@
 require 'csv'
 require 'date'
+require 'open-uri'
+
 class TransactionsController < ApplicationController
   # GET /transactions
   # GET /transactions.json
@@ -101,7 +103,7 @@ class TransactionsController < ApplicationController
     if request.post? && params[:file].present? #start_2
       infile = params[:file].tempfile
 
-      Transaction.delete_all
+      Transaction.where(group_id => 1).delete_all
 
       CSV.foreach(infile, :headers => true, :col_sep => ';') do |row| #start_3
 
@@ -109,7 +111,7 @@ class TransactionsController < ApplicationController
 
         #binding.pry
 
-        if row.to_hash["Symbol"] != nil || row.to_hash["Quantity"] != nil || row.to_hash["Price"] != nil || row.to_hash["ActionNameUS"] || row.to_hash["TradeDate"] != nil || row.to_hash["SettledDate"] != nil || row.to_hash["Interest"] != nil || row.to_hash["Amount"] != nil || row.to_hash["Commission"] != nil || row.to_hash["Fees"] != nil || row.to_hash["CUISP"] != nil || row.to_hash["Description"] != nil || row.to_hash["ActionId"] != nil || row.to_hash["TradeNumber"] != nil || row.to_hash["RecordType"] != nil
+        if row.to_hash["Symbol"] != nil || row.to_hash["Quantity"] != nil || row.to_hash["Price"] != nil || row.to_hash["ActionNameUS"] || row.to_hash["TradeDate"] != nil || row.to_hash["SettledDate"] != nil || row.to_hash["Interest"] != nil || row.to_hash["Amount"] != nil || row.to_hash["Commission"] != nil || row.to_hash["Fees"] != nil || row.to_hash["CUISP"] != nil || row.to_hash["Description"] != nil || row.to_hash["ActionId"] != nil || row.to_hash["TradeNumber"] != nil || row.to_hash["RecordType"] != nil #start_4
             
             txn.update_attributes(
               :stock_symbol => row.to_hash["Symbol"], #Row 1
@@ -132,7 +134,11 @@ class TransactionsController < ApplicationController
               :group_id => "1", #a test, set by page->cookie?
               :user_id => "1" #a test, set by user.id->cookie?
             )
-        end
+        end #end_4
+
+        #mechanize
+        #Transaction
+
       end #end_3
       redirect_to transactions_url
     else

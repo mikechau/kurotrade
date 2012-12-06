@@ -1,0 +1,9 @@
+<h1>Mock Dashboard</h1>
+
+<%# @transactions.group(:stock_symbol).each do |t| %>
+<%#= t.stock_symbol %>
+<%# end %>
+
+<% @recent_data.each do |stock| %>
+	<%= stock[:name] %>: <%= stock[:info][:trade_date] %> @ <%= stock[:info][:trade_time] %> = $<%= stock[:info][:trade_price] %><br />
+<% end %>
