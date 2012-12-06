@@ -3,7 +3,6 @@ THE STARTER LEAGUE: FALL 2012 - DEMO DAY PROJECT
 KUROTRADE
 
 TEAM MEMBERS: 
-- Project Leader: Michael Chau
-- Database Architect: Chris MacDonald
-- Front End/UX: Scott Townsley
-- Use Case/Research/QA: John Malloy
+- Lead Developer: Michael Chau [Full Stack]
+- Support 1: Scott Townsley
+- Support 2: John Malloy
