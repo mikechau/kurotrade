@@ -41,7 +41,7 @@ class StaticPagesController < ApplicationController
       CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
         last_market_date = market_data.select {|m| m[:ticker] == symbol}.last
         #if market_data.any? {|m| m[:market_date] == row.to_hash['Date'] && m[:ticker] == symbol && m[:close_price] == row.to_hash['Close']} == nil
-        if last_market_date[:market_date] < Date.parse(row.to_hash['Date'])
+        if last_market_date[:market_date] < Date.parse(row.to_hash['Date']) || (market_data.any? {|m| m[:ticker] == symbol} == nil)
           puts "Adding #{symbol} :: #{row}"
           add_market_data = MarketData.new
           add_market_data.update_attributes(
