@@ -33,7 +33,7 @@ class StaticPagesController < ApplicationController
     tickers.each do |symbol|
       page = agent.get("http://finance.yahoo.com/q/hp?s=#{symbol}+Historical+Prices")
       dl_csv = page.link_with(:text => 'Download to Spreadsheet').href
-      puts "Begin: #{symbol}"
+      #puts "Begin: #{symbol}"
       # check if the ticker exists in the DB
       CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
         last_market_date = market_data.select {|m| m[:ticker] == symbol}.last
@@ -47,7 +47,7 @@ class StaticPagesController < ApplicationController
             :close_price => row.to_hash['Close'],
             :adj_close => row.to_hash['Adj Close']
           )
-        elsif last_market_date[:market_date] > Date.parse(row.to_hash['Date'])
+        elsif last_market_date[:market_date] >= Date.parse(row.to_hash['Date'])
           break
         else
           puts "#{idx} :: #{symbol} :: ERROR"
