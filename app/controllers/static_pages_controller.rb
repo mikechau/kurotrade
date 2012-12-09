@@ -23,7 +23,7 @@ class StaticPagesController < ApplicationController
     # collect tickers into array
     tickers = []
 
-    transactions.select{|t| t[:stock_symbol]}.uniq.each do |t|
+    transactions.uniq.pluck(:stock_symbol).each do |t|
       if t.stock_symbol != 'Cash'
       tickers << t.stock_symbol
       end
@@ -39,9 +39,8 @@ class StaticPagesController < ApplicationController
       #puts "Begin: #{symbol}"
       # check if the ticker exists in the DB
       CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
-        if market_data.any? {|m| m[:ticker] == symbol}
-          last_market_date = market_data.select {|m| m[:ticker] == symbol}.last
-        end
+        last_market_date = market_data.select {|m| m[:ticker] == symbol}.last
+      
         #if market_data.any? {|m| m[:market_date] == row.to_hash['Date'] && m[:ticker] == symbol && m[:close_price] == row.to_hash['Close']} == nil
         if last_market_date[:market_date] < Date.parse(row.to_hash['Date']) || last_market_date[:market_date] == nil
           puts "Adding #{symbol} :: #{row}"
