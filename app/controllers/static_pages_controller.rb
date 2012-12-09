@@ -21,13 +21,13 @@ class StaticPagesController < ApplicationController
     # transactions = transactions_initial.where(:group_id => 1)
 
     # collect tickers into array
-    tickers = []
-    tickers_list = transactions.uniq.pluck(:stock_symbol)
-    tickers_list.each do |ticker|
-      if ticker != 'Cash'
-      tickers << ticker
-      end
-    end
+    tickers = ["GLW", "SPPI", "DEPO", "PT", "MCP"]
+    # tickers_list = [transactions.uniq.pluck(:stock_symbol)]
+    # tickers_list.each do |ticker|
+    #   if ticker != 'Cash'
+    #   tickers << ticker
+    #   end
+    # end
 
     ### Mechanize Populate DB ###################################
     market_data = MarketData.order(:market_date)
