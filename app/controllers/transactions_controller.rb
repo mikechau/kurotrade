@@ -103,7 +103,7 @@ class TransactionsController < ApplicationController
     if request.post? && params[:file].present? #start_2
       infile = params[:file].tempfile
 
-      Transaction.where(group_id => 1).delete_all
+      Transaction.delete_all #delete only group id
 
       CSV.foreach(infile, :headers => true, :col_sep => ';') do |row| #start_3
 
