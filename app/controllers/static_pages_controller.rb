@@ -22,10 +22,10 @@ class StaticPagesController < ApplicationController
 
     # collect tickers into array
     tickers = []
-
-    transactions.uniq.pluck(:stock_symbol).each do |t|
-      if t.stock_symbol != 'Cash'
-      tickers << t.stock_symbol
+    tickers_list = transactions.uniq.pluck(:stock_symbol)
+    tickers_list.each do |ticker|
+      if ticker != 'Cash'
+      tickers << ticker
       end
     end
 
