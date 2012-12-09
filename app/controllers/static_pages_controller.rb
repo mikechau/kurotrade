@@ -14,13 +14,16 @@ class StaticPagesController < ApplicationController
 
   def mock_dashboard
 
-    transactions_initial = Transaction.order(:trade_date)
-    transactions = transactions_initial.where(:group_id => 1)
+    transactions = Transaction.where(:group_id => 1)
+    transactions = transactions.order(:trade_date)
+
+    # transactions_initial = Transaction.order(:trade_date)
+    # transactions = transactions_initial.where(:group_id => 1)
 
     # collect tickers into array
     tickers = []
 
-    transactions.group(:stock_symbol).each do |t|
+    transactions.select{|t| t[:stock_symbol]}.uniq.each do |t|
       if t.stock_symbol != 'Cash'
       tickers << t.stock_symbol
       end
