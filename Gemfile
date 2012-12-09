@@ -12,6 +12,7 @@ end
 
 group :production do
   gem 'pg'
+  gem 'thin'
 end
 
 # Gems used only for assets and not required
@@ -32,6 +33,7 @@ gem 'jquery-rails'
 gem 'bcrypt-ruby', '~> 3.0.0'
 
 gem 'mechanize'
+gem 'therubyracer'
 
 #gem "nvd3-rails", :git => "git@github.com:adeven/nvd3-rails.git", :submodules => true
 
