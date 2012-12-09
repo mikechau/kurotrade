@@ -1,3 +1,11 @@
+GIT
+  remote: git@github.com:adeven/nvd3-rails.git
+  revision: 05b04b84d52dbc7196035c847f0141917c85d788
+  submodules: true
+  specs:
+    nvd3-rails (0.0.1)
+      railties (>= 3.2.0, < 5.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -133,6 +141,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   jquery-rails
   mechanize
+  nvd3-rails!
   pry
   rails (= 3.2.8)
   sass-rails (~> 3.2.3)

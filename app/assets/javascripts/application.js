@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require nvd3-rails
 //= require raphael
 //= require morris.min
 //= require_tree .

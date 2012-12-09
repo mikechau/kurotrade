@@ -259,7 +259,9 @@ class StaticPagesController < ApplicationController
     @stock_balance = 0.0
     @total_value = @total_value ||= 0
     @nav_per_unit = @nav_per_unit ||= 0
+    initial_npu = 0.0
     @net_asset_value = @net_asset_value ||= 0
+    @return_nav = 0.0
 
     trades_count = trades_array.count
     @portfolio = []
@@ -268,13 +270,17 @@ class StaticPagesController < ApplicationController
         trade[:commision] = 0.0
       end
 
+      trade[:date] = trade[:date].strftime("%m-%d-%Y")
+
       if trade[:desc] == 'DEPOSIT' && idx == 0
-        @nav_units = 1000
+        @nav_units = 1000.0
         @cash_balance += trade[:total]
         @total_value = @cash_balance + @stock_balance
-        @nav_per_unit = @total_value / @nav_units
+        initial_npu = @total_value / @nav_units
+        @nav_per_unit = initial_npu
         @net_asset_value = @nav_per_unit * @nav_units
-        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value}
+
+        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value, :return => 0.0}
       elsif trade[:desc] == 'BUY'
         book_value = (trade[:qty] * trade[:price] * -1) + trade[:commission]
         @cash_balance += book_value
@@ -282,7 +288,9 @@ class StaticPagesController < ApplicationController
         @total_value = @cash_balance + @stock_balance
         @nav_per_unit = @total_value / @nav_units
         @net_asset_value = @nav_per_unit * @nav_units
-        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value}
+        @return_nav = ((@nav_per_unit - initial_npu) / initial_npu) * 100
+
+        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value, :return => @return_nav}
       elsif trade[:desc] == 'SELL'
         sell_value = (trade[:qty] * trade[:sell_price] * -1) + trade[:commission]
         @cash_balance += sell_value
@@ -290,7 +298,8 @@ class StaticPagesController < ApplicationController
         @total_value = @cash_balance + @stock_balance
         @nav_per_unit = @total_value / @nav_units
         @net_asset_value = @nav_per_unit * @nav_units
-        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value}
+        @return_nav = ((@nav_per_unit - initial_npu) / initial_npu) * 100
+        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value, :return => @return_nav}
       elsif trade[:desc] == 'MRKT'
         book_value = (trade[:book_price] * trade[:qty] * -1) + trade[:commission]
         mrkt_value = trade[:qty] * trade[:price]
@@ -299,34 +308,38 @@ class StaticPagesController < ApplicationController
         @total_value = @cash_balance + market_stock_balance
         @nav_per_unit = @total_value / @nav_units
         @net_asset_value = @nav_per_unit * @nav_units
-        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value}
+        @return_nav = ((@nav_per_unit - initial_npu) / initial_npu) * 100
+        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value, :return => @return_nav}
       elsif trade[:desc] == 'CREDIT INTEREST' || trade[:desc] == 'DIVIDEND'
         @cash_balance += trade[:total]
         @total_value = @cash_balance + @stock_balance
         @nav_per_unit = @total_value / @nav_units
         @net_asset_value = @nav_per_unit * @nav_units
-        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value}
+        @return_nav = ((@nav_per_unit - initial_npu) / initial_npu) * 100
+        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value, :return => @return_nav}
       elsif trade[:desc] == 'WITHDRAWAL'
         @cash_balance += trade[:total]
         @total_value = @cash_balance + @stock_balance
         @nav_units = @nav_units - ( (-trade[:total]) / ( (@cash_balance + @stock_balance - trade[:total]) / @nav_units ) )
         @nav_per_unit = @total_value / @nav_units
         @net_asset_value = @nav_per_unit * @nav_units
-        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value}
+        @return_nav = ((@nav_per_unit - initial_npu) / initial_npu) * 100
+        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value, :return => @return_nav}
       elsif trade[:desc] == 'DEPOSIT' && idx > 0
         @cash_balance += trade[:total]
         @total_value = @cash_balance + @stock_balance
         @nav_units = @nav_units + ( (trade[:total]) / ( (@cash_balance + @stock_balance - trade[:total]) / @nav_units ) ) 
         @nav_per_unit = @total_value / @nav_units
         @net_asset_value = @nav_per_unit * @nav_units
-        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value}
+        @return_nav = ((@nav_per_unit - initial_npu) / initial_npu) * 100
+        @portfolio << {:date => trade[:date], :nav => @net_asset_value, :nav_units => @nav_units, :nav_per_unit => @nav_per_unit, :cash => @cash_balance, :stock => @stock_balance, :total => @total_value, :return => @return_nav}
       else
         puts "NAV CALC ERROR: #{idx} :: #{trade}"
       end
     end
 
     @test = trades_array
-
+    @portfolio = @portfolio.reverse.uniq {|x| x[:date]}.reverse
   end # def end
 
 ######################
