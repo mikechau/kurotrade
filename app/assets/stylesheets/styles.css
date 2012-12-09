@@ -1,0 +1,35 @@
+body {
+  padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+#chart1 svg {
+  height: 500px;
+  margin: 10px;
+  min-width: 100px;
+  min-height: 100px;
+}
+
+.date {
+  text-align: right;
+}
+
+.nav_stat {
+  font-size: 60px;
+  text-align: center;
+  line-height: 200px;
+  color: white;
+}
+
+.square_green {
+  height: 187px;
+  width: 300px;
+  margin-top: 45px;
+  background-color: #6BBD46;
+}
+
+.square_red {
+  height: 187px;
+  width: 300px;
+  margin-top: 45px;
+  background-color: #CD4900;
+}
