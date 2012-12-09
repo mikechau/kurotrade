@@ -1,64 +1,176 @@
+<div class="container">
+  <div class="row">
+    <div class="span8">
+      <h1>Portfolio Dashboard</h1>
+    </div>
 
-<h1>Mock Dashboard</h1>
+    <div class="span4">
+      <h1 class="date"><%= Date.today.strftime("%b %e, %Y") %></h1>
+    </div>
+  </div>
 
-<div id='chart'>
-  <svg style='height:500px'> </svg>
-</div>
+  <div class="row"><!-- chart row-->
+    <div class="span12">
+      <div id="chart1">
+        <svg></svg>
+      </div>
+    <div>
+  </div> <!-- /chart row -->
 
-<hr />
+  <hr />
 
-Cash Balance: <%= @cash_balance %> || Stock Balance: <%= @stock_balance %>
-Net Asset Value: <%= @net_asset_value %> || NAV Units: <%= @nav_units %> || NAV Per Unit: <%= @nav_per_unit %>
+  <div class="row"><!-- metrics row -->
 
+    <div class="span5"> <!-- start: span 5 -->
+      <h3>Open Positions</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Ticker</th>
+            <th>Book</th>
+            <th>Market</th>
+            <th>Qty</th>
+            <th>Change</th>
+            <th>Return</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @display_op.each do |op| %>
+            <% market_price = op[:market][0][:trade_price] %>
+            <% market_total = market_price*op[:qty] %>
+            <% change = market_total - op[:book_value] %>
+            <% stock_return = ((change) / op[:book_value]) * 100 %>
+          <tr>
+            <td><%= op[:ticker] %></td>
+            <td>$<%= op[:price] %></td>
+            <td>$<%= market_price %></td>
+            <td><%= op[:qty] %></td>
+            <td><%= number_to_currency(change) %></td>
+            <td><%= number_to_percentage(stock_return) %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div><!-- end: span 5 -->
 
-<hr />
+    <div class="span4"><!-- start: span 4 (2)-->
+      <h3>Vitals</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cash Balance</td>
+            <td><%= number_to_currency(@cash_balance) %></td>
+          </tr>
+          <tr>
+            <td>Stock Balance</td>
+            <td><%= number_to_currency(@stock_balance) %></td>
+          </tr>
+          <tr>
+            <td>Net Asset Value</td>
+            <td><%= number_to_currency(@net_asset_value) %></td> 
+          </tr>
+          <tr>
+            <td>NAV Units</td>
+            <td><%= number_with_precision(@nav_units, :precision => 2, :delimiter => ',') %></td>
+          </tr>
+          <tr>
+            <td>NAV Per Unit</td>
+            <td><%= number_to_currency(@nav_per_unit) %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div><!-- end: span 4 (2) -->
+    <div class="span3"> <!-- start: span 3 -->
+      <h3>Net Asset Value %</h3>
+      <% if @return_nav > 0 %>
+        <div class="square_green">
+      <% else %>
+        <div class="square_red">
+      <% end %>
+          <h1 class= "nav_stat"><%= number_to_percentage(@return_nav, :precision => 2) %></h1>
+        </div>
+    </div><!-- end: span 3 -->
+  </div><!-- /metrics row -->
 
-<% @recent_data.each do |stock| %>
-	<%= stock[:name] %>: <%= stock[:info][:trade_date] %> @ <%= stock[:info][:trade_time] %> = $<%= stock[:info][:trade_price] %><br />
-<% end %>
+</div> <!-- /container -->
 
-<hr />
-
-<ul>
-<% @test.each_with_index do |x,idx| %>
-<p>
-<li><%= x %></li>
-<li><%= @portfolio[idx] %></li>
-</p>
-<br />
-<% end %>
-</ul>
-
-<hr />
-
-
+<!-- javascripts -->
 <script>
+var testdata = [
+    { 
+      "key" : "Net Asset Value" , 
+      "bar": true,
+      "values" : [
+        <% @portfolio.each_with_index do |p, idx| %>
+          <% if idx != @portfolio.count-1 %> 
+            [ <%= p[:date] %>, <%= p[:nav] %> ],
+          <% else %>
+            [ <%= p[:date] %>, <%= p[:nav] %> ]
+          <% end %>
+        <% end %>
+      ]
+    } , 
+
+    { 
+      "key" : "NAV Return" , 
+      "values" : [ 
+        <% @portfolio.each_with_index do |p, idx| %>
+          <% if idx != @portfolio.count-1 %> 
+            [ <%= p[:date] %>, <%= p[:return] %> ],
+          <% else %>
+            [ <%= p[:date] %>, <%= p[:return] %> ]
+          <% end %>
+        <% end %>
+      ]
+    }
+].map(function(series) {
+  series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });
+  return series;
+});
 
 nv.addGraph(function() {
-    var testdata = exampleData(),
-        chart = nv.models.linePlusBarChart()
-          .margin({top: 30, right: 60, bottom: 50, left: 70})
-          .x(function(d,i) { return i })
-          .color(d3.scale.category10().range());
+    var chart = nv.models.linePlusBarWithFocusChart()
+        .margin({top: 30, right: 60, bottom: 50, left: 70})
+        .x(function(d,i) { return i })
+        .color(d3.scale.category10().range());
 
     chart.xAxis.tickFormat(function(d) {
       var dx = testdata[0].values[d] && testdata[0].values[d].x || 0;
-      return d3.time.format('%x')(new Date(dx))
+      if (dx > 0) {
+          return d3.time.format('%x')(new Date(dx))
+      }
+      return null;
     });
 
-    chart.xAxis.rotateLabels(-45);
-
+    chart.x2Axis.tickFormat(function(d) {
+      var dx = testdata[0].values[d] && testdata[0].values[d].x || 0;
+      return d3.time.format('%x')(new Date(dx))
+    });
+    
     chart.y1Axis
         .tickFormat(function(d) { return '$' + d3.format(',f')(d)});
 
-    chart.y2Axis
-        .tickFormat(function(d) { return d3.format(',f')(d) + '%'});
+    chart.y3Axis
+        .tickFormat(function(d) { return '$' + d3.format(',f')(d)});
 
+    chart.y2Axis
+        .tickFormat(function(d) { return d3.format(',.2f')(d) + '%' });
+
+    chart.y4Axis
+        .tickFormat(function(d) { return d3.format(',.2f')(d) + '%' });
+        
     chart.bars.forceY([0]);
+    chart.bars2.forceY([0]);
     //chart.lines.forceY([0]);
 
-    d3.select('#chart svg')
-        .datum(exampleData())
+    d3.select('#chart1 svg')
+        .datum(testdata)
       .transition().duration(500).call(chart);
 
     nv.utils.windowResize(chart.update);
@@ -66,38 +178,4 @@ nv.addGraph(function() {
     return chart;
 });
 
-
-function exampleData() {
-  return [ 
-    { 
-      "key" : "Net Asset Value" , 
-      "bar": true,
-      "values" : [
-      	<% @portfolio.each_with_index do |p, idx| %>
-      		<% if idx != @portfolio.count-1 %> 
-      			[ '<%= p[:date] %>', <%= p[:nav] %> ],
-      		<% else %>
-      			[ '<%= p[:date] %>', <%= p[:nav] %> ]
-      		<% end %>
-      	<% end %>
-      ]
-    } , 
-
-    { 
-      "key" : "NAV Return" , 
-      "values" : [ 
-      	<% @portfolio.each_with_index do |p, idx| %>
-      		<% if idx != @portfolio.count-1 %> 
-      			[ '<%= p[:date] %>', <%= p[:return] %> ],
-      		<% else %>
-      			[ '<%= p[:date] %>', <%= p[:return] %> ]
-      		<% end %>
-      	<% end %>
-      ]
-    }
-  ].map(function(series) {
-    series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });
-    return series;
-  }); 
-}
 </script>

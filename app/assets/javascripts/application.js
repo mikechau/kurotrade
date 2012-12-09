@@ -12,7 +12,14 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require nvd3-rails
-//= require raphael
-//= require morris.min
+//= require d3.v2
+//= require nv.d3
+//= require utils.js
+//= require tooltip.js
+//= require legend.js
+//= require axis.js
+//= require scatter.js
+//= require line.js
+//= require historicalBar.js
+//= require linePlusBarWithFocusChart.js
 //= require_tree .

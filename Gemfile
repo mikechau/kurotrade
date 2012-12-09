@@ -31,7 +31,7 @@ gem 'bcrypt-ruby', '~> 3.0.0'
 
 gem 'mechanize'
 
-gem "nvd3-rails", :git => "git@github.com:adeven/nvd3-rails.git", :submodules => true
+#gem "nvd3-rails", :git => "git@github.com:adeven/nvd3-rails.git", :submodules => true
 
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'

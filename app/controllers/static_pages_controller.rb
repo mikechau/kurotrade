@@ -26,65 +26,62 @@ class StaticPagesController < ApplicationController
       end
     end
 
-    #### Mechanize Populate DB ###################################
-    # market_data = MarketData.all
-    # agent = Mechanize.new
+    ### Mechanize Populate DB ###################################
+    market_data = MarketData.order(:market_date)
+    agent = Mechanize.new
 
-    # tickers.each do |symbol|
-    #   page = agent.get("http://finance.yahoo.com/q/hp?s=#{symbol}+Historical+Prices")
-    #   dl_csv = page.link_with(:text => 'Download to Spreadsheet').href
-    #   csv_data = open(dl_csv)
+    tickers.each do |symbol|
+      page = agent.get("http://finance.yahoo.com/q/hp?s=#{symbol}+Historical+Prices")
+      dl_csv = page.link_with(:text => 'Download to Spreadsheet').href
+      puts "Begin: #{symbol}"
+      # check if the ticker exists in the DB
+      CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
+        last_market_date = market_data.select {|m| m[:ticker] == symbol}.last
+        #if market_data.any? {|m| m[:market_date] == row.to_hash['Date'] && m[:ticker] == symbol && m[:close_price] == row.to_hash['Close']} == nil
+        if last_market_date[:market_date] < Date.parse(row.to_hash['Date'])
+          puts "Adding #{symbol} :: #{row}"
+          add_market_data = MarketData.new
+          add_market_data.update_attributes(
+            :market_date => row.to_hash['Date'],
+            :ticker => symbol,
+            :close_price => row.to_hash['Close'],
+            :adj_close => row.to_hash['Adj Close']
+          )
+        elsif last_market_date[:market_date] > Date.parse(row.to_hash['Date'])
+          break
+        else
+          puts "#{idx} :: #{symbol} :: ERROR"
+        end
+      end
 
-    #   csv_count = csv_data.count -1 #remove the header
-    #   md_count = market_data.select {|m| m[:ticker] == symbol}.count
+    end
+    ###########################################################
 
-    #   # check if the ticker exists in the DB
-    #   if market_data.any? {|m| m[:ticker] == symbol} == nil || csv_count > md_count
-    #     CSV.new(csv_data, :headers => :first_row).each do |row|
-    #       if market_data.find {|m| m[:market_date] == row.to_hash['Date'] && m[:ticker] == symbol && m[:close_price] == row.to_hash['Close']} == nil
-    #         puts row
-    #         add_market_data = MarketData.new
-    #         add_market_data.update_attributes(
-    #           :market_date => row.to_hash['Date'],
-    #           :ticker => symbol,
-    #           :close_price => row.to_hash['Close'],
-    #           :adj_close => row.to_hash['Adj Close']
-    #         )
-    #       end
-    #     end
-    #   elsif csv_count == md_count
-    #     #do nothing
-    #   else
-    #     #do nothing
+    ## Collect Current Market Prices ##########################
+    # ticker_string = ''
+    # plus = '+'
+    # @recent_data = []
+
+    # tickers.each_with_index do |ticker, idx|
+    #   ticker_string = ticker_string.concat(ticker.to_s)
+    #   if idx < tickers.count-1
+    #     ticker_string = ticker_string+plus
     #   end
     # end
-    ############################################################
 
-    ### Collect Current Market Prices ##########################
-    ticker_string = ''
-    plus = '+'
-    @recent_data = []
+    # url = "http://finance.yahoo.com/d/quotes.csv?s=#{ticker_string}&f=sd1t1l1"
 
-    tickers.each_with_index do |ticker, idx|
-      ticker_string = ticker_string.concat(ticker.to_s)
-      if idx < tickers.count-1
-        ticker_string = ticker_string+plus
-      end
-    end
+    # CSV.new(open(url)).each_with_index do |line,idx|
+    #   ticker = line[0]
+    #   current = Hash.new
+    #   current[:name] = line[0]
+    #   current[:info] = {:trade_date => line[1], :trade_time => line[2], :trade_price => line[3]}
+    #   @recent_data << current
+    # end
 
-    url = "http://finance.yahoo.com/d/quotes.csv?s=#{ticker_string}&f=sd1t1l1"
+  ###########################################################
 
-    CSV.new(open(url)).each_with_index do |line,idx|
-      ticker = line[0]
-      current = Hash.new
-      current[:name] = line[0]
-      current[:info] = {:trade_date => line[1], :trade_time => line[2], :trade_price => line[3]}
-      @recent_data << current
-    end
-
-  ############################################################
-
-    ### NAV CALC ###############################################
+    ## NAV CALC ###############################################
     # select only group transactions
 
     market_db = MarketData.all
@@ -119,9 +116,9 @@ class StaticPagesController < ApplicationController
         end
 
       ###
-      unique_prices = transactions.select {|o| o[:ticker] == trade[:stock_symbol]}.uniq {|t| t[:price]}
+      unique_prices = transactions.select {|o| o[:stock_symbol] == trade[:stock_symbol]}.uniq {|t| t[:price]}
       if unique_prices != nil
-        unique_prices.each_with_index do |uq, idx|
+        unique_prices.each do |uq|
           check_positions = open_positions.select {|o| o[:ticker] == trade[:stock_symbol] && o[:price] == uq[:price]}
           check_pos_count = (check_positions.count) -1
           check_positions.each_with_index do |pos, idx|
@@ -159,7 +156,7 @@ class StaticPagesController < ApplicationController
       end
 
       ######
-      unique_prices = transactions.select {|o| o[:ticker] == trade[:stock_symbol]}.uniq {|t| t[:price]}
+      unique_prices = transactions.select {|o| o[:stock_symbol] == trade[:stock_symbol]}.uniq {|t| t[:price]}
       if unique_prices != nil
         unique_prices.each do |uq|
           check_positions = open_positions.select {|o| o[:ticker] == trade[:stock_symbol] && o[:price] == uq[:price]}
@@ -270,7 +267,7 @@ class StaticPagesController < ApplicationController
         trade[:commision] = 0.0
       end
 
-      trade[:date] = trade[:date].strftime("%m-%d-%Y")
+      trade[:date] = trade[:date].to_time.to_i*1000 #convert to integer for charts
 
       if trade[:desc] == 'DEPOSIT' && idx == 0
         @nav_units = 1000.0
@@ -338,8 +335,23 @@ class StaticPagesController < ApplicationController
       end
     end
 
-    @test = trades_array
-    @portfolio = @portfolio.reverse.uniq {|x| x[:date]}.reverse
+    @portfolio = @portfolio.reverse.uniq {|x| x[:date]}.reverse #clean up data points
+    @display_op = open_positions.select {|o| o[:mark] != true && o[:qty] > 0}.sort {|x, y| x[:date] <=> y[:date]}
+
+    @display_op.each_with_index do |op, idx|
+
+      url = "http://finance.yahoo.com/d/quotes.csv?s=#{op[:ticker]}&f=sd1t1l1"
+      CSV.new(open(url)).each do |line|
+        current = []
+        current << {:trade_date => line[1], :trade_time => line[2], :trade_price => line[3].to_f}
+        @display_op[idx][:market] = current
+      end
+
+      book_value = op[:price] * op[:qty] + (op[:commission]*-1)
+      op[:book_value] = book_value.to_f
+    end
+
+
   end # def end
 
 ######################
