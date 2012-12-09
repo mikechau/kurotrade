@@ -1,29 +1,21 @@
 
 <h1>Mock Dashboard</h1>
 
-
-<hr />
-
-<style>
-#nav_chart {
-        background-color: #EEE;
-}
-</style>
-
-<div id="nav_chart" style="width: 100%; height: 400px;"></div>
-
-<%# @transactions.group(:stock_symbol).each do |t| %>
-<%#= t.stock_symbol %>
-<%# end %>
-
-<% @recent_data.each do |stock| %>
-	<%= stock[:name] %>: <%= stock[:info][:trade_date] %> @ <%= stock[:info][:trade_time] %> = $<%= stock[:info][:trade_price] %><br />
-<% end %>
+<div id='chart'>
+  <svg style='height:500px'> </svg>
+</div>
 
 <hr />
 
 Cash Balance: <%= @cash_balance %> || Stock Balance: <%= @stock_balance %>
 Net Asset Value: <%= @net_asset_value %> || NAV Units: <%= @nav_units %> || NAV Per Unit: <%= @nav_per_unit %>
+
+
+<hr />
+
+<% @recent_data.each do |stock| %>
+	<%= stock[:name] %>: <%= stock[:info][:trade_date] %> @ <%= stock[:info][:trade_time] %> = $<%= stock[:info][:trade_price] %><br />
+<% end %>
 
 <hr />
 
@@ -39,28 +31,73 @@ Net Asset Value: <%= @net_asset_value %> || NAV Units: <%= @nav_units %> || NAV 
 
 <hr />
 
-<!-- embed the array into the Morris javascript -->
-<script type="text/javascript">
-Morris.Bar({
-  element: 'nav_chart',
-  data: [
-    <% @portfolio.each_with_index do |array, index| %>
-        <% if index != (@portfolio.count - 1) %>
-            {y: '<%= array[:date] %>', a: <%= array[:nav] %>},
-        <% else %>
-            {y: '<%= array[:date] %>', a: <%= array[:nav] %>}
-        <% end %>
-    <% end %>
-  ],
-  xkey: 'y',
-  ykeys: ['a'],
-  labels: ["Net Asset Value"],
-  preUnits: '$',
-  ymax: 'auto',
-  ymin: 'auto',
-  hideHover: true,
-  pointSize: 0,
-  hoverOpacity: .8,
-  hoverFontSize: 20
+
+<script>
+
+nv.addGraph(function() {
+    var testdata = exampleData(),
+        chart = nv.models.linePlusBarChart()
+          .margin({top: 30, right: 60, bottom: 50, left: 70})
+          .x(function(d,i) { return i })
+          .color(d3.scale.category10().range());
+
+    chart.xAxis.tickFormat(function(d) {
+      var dx = testdata[0].values[d] && testdata[0].values[d].x || 0;
+      return d3.time.format('%x')(new Date(dx))
+    });
+
+    chart.xAxis.rotateLabels(-45);
+
+    chart.y1Axis
+        .tickFormat(function(d) { return '$' + d3.format(',f')(d)});
+
+    chart.y2Axis
+        .tickFormat(function(d) { return d3.format(',f')(d) + '%'});
+
+    chart.bars.forceY([0]);
+    //chart.lines.forceY([0]);
+
+    d3.select('#chart svg')
+        .datum(exampleData())
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
 });
+
+
+function exampleData() {
+  return [ 
+    { 
+      "key" : "Net Asset Value" , 
+      "bar": true,
+      "values" : [
+      	<% @portfolio.each_with_index do |p, idx| %>
+      		<% if idx != @portfolio.count-1 %> 
+      			[ '<%= p[:date] %>', <%= p[:nav] %> ],
+      		<% else %>
+      			[ '<%= p[:date] %>', <%= p[:nav] %> ]
+      		<% end %>
+      	<% end %>
+      ]
+    } , 
+
+    { 
+      "key" : "NAV Return" , 
+      "values" : [ 
+      	<% @portfolio.each_with_index do |p, idx| %>
+      		<% if idx != @portfolio.count-1 %> 
+      			[ '<%= p[:date] %>', <%= p[:return] %> ],
+      		<% else %>
+      			[ '<%= p[:date] %>', <%= p[:return] %> ]
+      		<% end %>
+      	<% end %>
+      ]
+    }
+  ].map(function(series) {
+    series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });
+    return series;
+  }); 
+}
 </script>
