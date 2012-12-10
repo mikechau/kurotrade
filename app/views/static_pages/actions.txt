@@ -7,7 +7,14 @@ CancelSell
 MarginInterest
 Disbursement
 Journal
-ReestablishFails
+ReestablishFails2nd Place Runner Up for Best Nokia App
+MonkeyBars and Nokia
+October 2012 The Starter League
+Nokia Hackathon at IIT by MonkeyBars
+
+Application: CitySnap, a mashup with the Nokia Maps and Instagram API. Enter a city, a map is shown with the most recent pictures from Instagram within the area.
+
+Team Members: Joseph Villanueva, Jean-Nicholas Hould, Bernard Chan
 CorporateReorganization
 Reversal
 Sell

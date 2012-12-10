@@ -1,37 +1,53 @@
-<%= form_for(@user) do |f| %>
+<%= form_for(@user, :html => { :class => "form-horizontal" } ) do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+      <h2 class="alert alert-error"><%= pluralize(@user.errors.count, "error") %> prohibited this registration:</h2>
 
       <ul>
       <% @user.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+        <li style="color: #B94A48; font-weight: bold;"><%= msg %></li>
       <% end %>
       </ul>
     </div>
+    <hr />
   <% end %>
-
-  <div class="field">
-    <%= f.label :username %><br />
-    <%= f.text_field :username %>
-  </div>
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password %>
-  </div>
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation %>
-  </div>  
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.text_field :email %>
-  </div>
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <fieldset>
+    <% if @user.new_record? %>
+      <div class="control-group">
+        <%= f.label :username, class: "control-label" %> 
+        <div class="controls">
+          <%= f.text_field :username, :placeholder => "username" %>
+        </div>
+      </div>
+    <% end %>
+    <div class="control-group">
+      <%= f.label :password, class: "control-label" %>
+      <div class="controls">
+        <%= f.password_field :password, :placeholder => "password"  %>
+      </div>
+    </div>
+    <div class="control-group">
+      <%= f.label :password_confirmation, class: "control-label" %>
+      <div class="controls">
+      <%= f.password_field :password_confirmation, :placeholder => "password confirmation"  %>
+      </div>
+    </div>  
+    <div class="control-group">
+      <%= f.label :name, class: "control-label" %>
+      <div class="controls">
+      <%= f.text_field :name, :placeholder => "name"  %>
+      </div>
+    </div>
+    <div class="control-group">
+      <%= f.label :email, class: "control-label" %>
+      <div class="controls">
+      <%= f.text_field :email, :placeholder => "email address"  %>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <%= f.submit "Save Changes", :class => "btn btn-large btn-primary"%>
+      </div>
+    </div>
+  </fieldset>
 <% end %>

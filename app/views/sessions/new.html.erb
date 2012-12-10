@@ -1,0 +1,9 @@
+<div class="container">
+  <%= form_tag(session_url, {:class => "form-signin"}) do %>
+    <h2 class="form-signin-heading">kurotrade</h2>
+    <hr />
+      <p><%= text_field_tag :username, nil, :placeholder => "username", :class => "login username-field" %></p>
+      <p><%= password_field_tag :password, nil, :placeholder => "password", :class => "login password-field" %></p>
+      <%= submit_tag 'Login', :class => 'btn btn-large btn-primary' %>
+  <% end %>
+</div><!-- /container -->
