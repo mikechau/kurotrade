@@ -160,7 +160,7 @@ nv.addGraph(function() {
         .tickFormat(function(d) { return '$' + d3.format(',f')(d)});
 
     chart.y2Axis
-        .tickFormat(function(d) { return d3.format(',.2f')(d) + '%' });
+        .tickFormat(function(d) { return '$' + d3.format(',.2f')(d) });
 
     chart.y4Axis
         .tickFormat(function(d) { return d3.format(',.2f')(d) + '%' });
