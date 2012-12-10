@@ -19,24 +19,45 @@
         <%= link_to 'kurotrade', root_url, :class => 'brand' %>
         <div class="nav-collapse collapse">
           <ul class="nav">
-            <li class="active"><a href="#">Dashboard</a></li>
-            <li><a href="#about">Transactions</a></li>
-            <li><a href="#about">Portfolios</a></li>
-            <li><a href="#about">Groups</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <% if current_user %>
+              <li><%= link_to 'Dashboard', dashboard_url %></li>
+              <li><%= link_to 'Transactions', transactions_url %></li>
+              <li><%= link_to 'Portfolios', portfolios_url %></li>
+              <li><%= link_to 'Groups', groups_url %></li>
+            <% else %>
+              <li><%= link_to 'Home', root_url %></li>
+            <% end %>
+              <li><%= link_to 'About', about_url %></li>
+              <li><%= link_to 'Contact', contact_url %></li>
           </ul>
           <ul class="nav pull-right">
-            <li><a href="#contact">Register</a></li>
-            <li><a href="#contact">Login</a></li>
-            <li><a href="#contact">Settings</a></li>
-            <li><a href="#contact">Logout</a></li>
+            <% if current_user %>
+              <li><%= link_to 'Settings', edit_user_url(current_user.id) %></li>
+              <li><%= link_to 'Logout', logout_url %></li>
+            <% else %>
+              <li><%= link_to 'Register', new_user_url %></li>
+              <li><%= link_to 'Login', login_url %></li>
+            <% end %>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
   </div>
 
+<%= render 'layouts/flash_messages' %>
+
 <%= yield %>
+
+<script>
+  var url = window.location;
+  // Will only work if string in href matches with location
+  $('ul.nav a[href="'+ url +'"]').parent().addClass('active');
+
+  // Will also work for relative and absolute hrefs
+  $('ul.nav a').filter(function() {
+      return this.href == url;
+  }).parent().addClass('active');
+</script>
 
 </body>
 </html>

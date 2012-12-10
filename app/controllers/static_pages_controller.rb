@@ -358,5 +358,14 @@ class StaticPagesController < ApplicationController
 
   end # def end
 
+  def about
+  end
+
+  def contact
+  end
+
+  def testing
+  end
+
 ######################
 end #class end
