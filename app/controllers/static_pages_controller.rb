@@ -32,7 +32,7 @@ class StaticPagesController < ApplicationController
     puts tickers
 
     ### Mechanize Populate DB ###################################
-    market_data = MarketData.order(:market_date)
+    market_data = MarketData
     agent = Mechanize.new
 
     tickers.each do |symbol|
@@ -43,7 +43,7 @@ class StaticPagesController < ApplicationController
       # check if the ticker exists in the DB
       CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
         if market_data.any? {|m| m[:ticker] == symbol}
-          last_market_date = market_data.select {|m| m[:ticker] == symbol}.last
+          last_market_date = market_data.select {|m| m[:ticker] == symbol}.first
           if last_market_date[:market_date] < Date.parse(row.to_hash['Date'])
             add_market_data = MarketData.new
             add_market_data.update_attributes(
@@ -55,7 +55,7 @@ class StaticPagesController < ApplicationController
           elsif last_market_date[:market_date] >= Date.parse(row.to_hash['Date'])
             break
           end
-        elsif market_data.any? {|m| m[:ticker] == symbol} == false
+        else
           add_market_data = MarketData.new
           add_market_data.update_attributes(
             :market_date => row.to_hash['Date'],
@@ -63,10 +63,7 @@ class StaticPagesController < ApplicationController
             :close_price => row.to_hash['Close'],
             :adj_close => row.to_hash['Adj Close']
           )
-        else 
-          puts "ERROR: #{symbol} :: Last Row: #{row}"
         end
-        puts "UPLOAD COMPLETE FOR #{symbol}, Last Row: #{row}"
       end
     end
 
@@ -100,7 +97,7 @@ class StaticPagesController < ApplicationController
     ## NAV CALC ###############################################
     # select only group transactions
 
-    market_db = MarketData.all
+    market_db = MarketData.order(:market_date)
 
     ##### EMPTY ARRAYS #####
 
