@@ -1,3 +1,9 @@
+/* GLOBAL */
+
+body {
+  padding-top: 40px;
+}
+
 /* INDEX */
 
 .moveup { 
@@ -101,14 +107,14 @@
 
 .square_green {
   height: 187px;
-  width: 300px;
+  width: 260px;
   margin-top: 45px;
   background-color: #6BBD46;
 }
 
 .square_red {
   height: 187px;
-  width: 300px;
+  width: 260px;
   margin-top: 45px;
   background-color: #CD4900;
 }

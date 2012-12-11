@@ -12,8 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require d3.v2
-//= require nv.d3
+//= require d3.v2.js
+//= require nv.d3.js
 //= require utils.js
 //= require tooltip.js
 //= require legend.js

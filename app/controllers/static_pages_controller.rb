@@ -20,31 +20,44 @@ class StaticPagesController < ApplicationController
     # transactions_initial = Transaction.order(:trade_date)
     # transactions = transactions_initial.where(:group_id => 1)
 
-    # collect tickers into array
-    tickers = []
-    tickers_list = transactions.pluck(:stock_symbol).uniq
-    tickers_list.each do |ticker|
-      if ticker != 'Cash'
-      tickers << ticker
+
+    if Time.now >= (Date.today.to_time+65000) 
+      # collect tickers into array
+      tickers = []
+      tickers_list = transactions.pluck(:stock_symbol).uniq
+      tickers_list.each do |ticker|
+        if ticker != 'Cash'
+        tickers << ticker
+        end
       end
-    end
 
-    puts tickers
+      puts tickers
 
-    ### Mechanize Populate DB ###################################
-    market_data = MarketData
-    agent = Mechanize.new
+      ### Mechanize Populate DB ###################################
+      market_data = MarketData.all
+      agent = Mechanize.new
 
-    tickers.each do |symbol|
-      page = agent.get("http://finance.yahoo.com/q/hp?s=#{symbol}+Historical+Prices")
-      dl_csv = page.link_with(:text => 'Download to Spreadsheet').href
-      puts dl_csv
-      #puts "Begin: #{symbol}"
-      # check if the ticker exists in the DB
-      CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
-        if market_data.any? {|m| m[:ticker] == symbol}
-          last_market_date = market_data.select {|m| m[:ticker] == symbol}.first
-          if last_market_date[:market_date] < Date.parse(row.to_hash['Date'])
+      tickers.each do |symbol|
+        page = agent.get("http://finance.yahoo.com/q/hp?s=#{symbol}+Historical+Prices")
+        dl_csv = page.link_with(:text => 'Download to Spreadsheet').href
+        puts dl_csv
+        #puts "Begin: #{symbol}"
+        # check if the ticker exists in the DB
+        CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
+          if market_data.any? {|m| m[:ticker] == symbol}
+            last_market_date = market_data.select {|m| m[:ticker] == symbol}.first
+            if last_market_date[:market_date] < Date.parse(row.to_hash['Date'])
+              add_market_data = MarketData.new
+              add_market_data.update_attributes(
+                :market_date => row.to_hash['Date'],
+                :ticker => symbol,
+                :close_price => row.to_hash['Close'],
+                :adj_close => row.to_hash['Adj Close']
+              )
+            elsif last_market_date[:market_date] >= Date.parse(row.to_hash['Date'])
+              break
+            end
+          else
             add_market_data = MarketData.new
             add_market_data.update_attributes(
               :market_date => row.to_hash['Date'],
@@ -52,20 +65,12 @@ class StaticPagesController < ApplicationController
               :close_price => row.to_hash['Close'],
               :adj_close => row.to_hash['Adj Close']
             )
-          elsif last_market_date[:market_date] >= Date.parse(row.to_hash['Date'])
-            break
           end
-        else
-          add_market_data = MarketData.new
-          add_market_data.update_attributes(
-            :market_date => row.to_hash['Date'],
-            :ticker => symbol,
-            :close_price => row.to_hash['Close'],
-            :adj_close => row.to_hash['Adj Close']
-          )
         end
       end
-    end
+    # else
+    #   puts "NOT PULLING MARKET HISTORY"
+    end # end time check
 
 
     ###########################################################
@@ -280,7 +285,8 @@ class StaticPagesController < ApplicationController
         trade[:commision] = 0.0
       end
 
-      trade[:date] = trade[:date].to_time.to_i*1000 #convert to integer for charts
+      trade[:date] = (trade[:date]+1).strftime("%Y/%m/%d").to_time.to_i * 1000
+  #convert to integer for charts and adjust for timezone difference
 
       if trade[:desc] == 'DEPOSIT' && idx == 0
         @nav_units = 1000.0
