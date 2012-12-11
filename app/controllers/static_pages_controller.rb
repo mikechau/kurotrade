@@ -43,7 +43,7 @@ class StaticPagesController < ApplicationController
       # check if the ticker exists in the DB
       CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
         if market_data.any? {|m| m[:ticker] == symbol}
-          last_market_date = market_data.select {|m| m[:ticker] == symbol}.last
+          last_market_date = market_data.select {|m| m[:ticker] == symbol}.first
           if last_market_date[:market_date] < Date.parse(row.to_hash['Date'])
             add_market_data = MarketData.new
             add_market_data.update_attributes(
