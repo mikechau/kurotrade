@@ -29,6 +29,8 @@ class StaticPagesController < ApplicationController
       end
     end
 
+    puts tickers
+
     ### Mechanize Populate DB ###################################
     market_data = MarketData.order(:market_date)
     agent = Mechanize.new
