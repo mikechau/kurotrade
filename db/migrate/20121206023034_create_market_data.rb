@@ -4,7 +4,8 @@ class CreateMarketData < ActiveRecord::Migration
       t.date :market_date
       t.string :ticker
       t.float :close_price
-      t.float :adj_close
+      t.string :adj_close
+      t.string :float
 
       t.timestamps
     end
