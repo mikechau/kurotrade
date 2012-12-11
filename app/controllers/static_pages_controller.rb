@@ -32,7 +32,7 @@ class StaticPagesController < ApplicationController
     puts tickers
 
     ### Mechanize Populate DB ###################################
-    market_data = MarketData.all
+    market_data = MarketData.order(:market_date)
     agent = Mechanize.new
 
     tickers.each do |symbol|
@@ -43,7 +43,7 @@ class StaticPagesController < ApplicationController
       # check if the ticker exists in the DB
       CSV.new(open(dl_csv), :headers => :first_row).each_with_index do |row, idx|
         if market_data.any? {|m| m[:ticker] == symbol}
-          last_market_date = market_data.select {|m| m[:ticker] == symbol}.first
+          last_market_date = market_data.select {|m| m[:ticker] == symbol}.last
           if last_market_date[:market_date] < Date.parse(row.to_hash['Date'])
             add_market_data = MarketData.new
             add_market_data.update_attributes(
