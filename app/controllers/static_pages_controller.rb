@@ -32,7 +32,7 @@ class StaticPagesController < ApplicationController
     puts tickers
 
     ### Mechanize Populate DB ###################################
-    market_data = MarketData.order(:market_date)
+    market_data = MarketData.all
     agent = Mechanize.new
 
     tickers.each do |symbol|
