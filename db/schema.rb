@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121206210524) do
+ActiveRecord::Schema.define(:version => 20121211001820) do
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -23,9 +23,9 @@ ActiveRecord::Schema.define(:version => 20121206210524) do
     t.date     "market_date"
     t.string   "ticker"
     t.float    "close_price"
-    t.float    "adj_close",   :limit => 255
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.float    "adj_close"
   end
 
   create_table "portfolios", :force => true do |t|
