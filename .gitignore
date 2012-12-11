@@ -19,3 +19,7 @@
 /doc/test-file1.csv
 /doc/navcalc.rb
 /doc/*.*
+
+#ignore database
+config/database.yml
+manifest.yml
