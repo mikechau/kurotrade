@@ -55,7 +55,7 @@ class StaticPagesController < ApplicationController
           elsif last_market_date[:market_date] >= Date.parse(row.to_hash['Date'])
             break
           end
-        else
+        elsif market_data.any? {|m| m[:ticker] == symbol} == false
           add_market_data = MarketData.new
           add_market_data.update_attributes(
             :market_date => row.to_hash['Date'],
@@ -63,7 +63,10 @@ class StaticPagesController < ApplicationController
             :close_price => row.to_hash['Close'],
             :adj_close => row.to_hash['Adj Close']
           )
+        else 
+          puts "ERROR: #{symbol} :: Last Row: #{row}"
         end
+        puts "UPLOAD COMPLETE FOR #{symbol}, Last Row: #{row}"
       end
     end
 
