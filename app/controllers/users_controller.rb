@@ -3,8 +3,10 @@ class UsersController < ApplicationController
   before_filter :require_user, :except => [:new, :create]
 
   def require_user
-    if session[:user_id] != params[:id].to_i #users index does not have a params
+    if session[:user_id] != params[:id].to_i && session[:user_id] == nil#users index does not have a params
       redirect_to login_url, :flash => { :error => "<b>Invalid login!</b> Please try again or #{view_context.link_to('register.', new_user_url)}".html_safe }
+    elsif session[:user_id] != params[:id].to_i && session[:user_id] != nil
+      redirect_to root_url
     end
   end
 
@@ -33,11 +35,15 @@ class UsersController < ApplicationController
   # GET /users/new
   # GET /users/new.json
   def new
-    @user = User.new
+    if session[:user_id] != nil
+      redirect_to root_url
+    else
+      @user = User.new
 
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @user }
+      respond_to do |format|
+        format.html # new.html.erb
+        format.json { render json: @user }
+      end
     end
   end
 

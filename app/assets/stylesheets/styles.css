@@ -1,7 +1,7 @@
 /* GLOBAL */
 
 body {
-  padding-top: 40px;
+  padding-top: 50px;
 }
 
 /* INDEX */
@@ -56,6 +56,22 @@ body {
 }
 .carousel-caption .btn {
   margin-top: 10px;
+}
+
+
+/* MARKETING CONTENT
+-------------------------------------------------- */
+
+/* Center align the text within the three columns below the carousel */
+.marketing .span4 {
+  text-align: center;
+}
+.marketing h2 {
+  font-weight: normal;
+}
+.marketing .span4 p {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 
@@ -159,5 +175,9 @@ body {
   .carousel-caption .lead,
   .carousel-caption .btn {
     font-size: 18px;
+  }
+
+  .marketing .span4 + .span4 {
+    margin-top: 40px;
   }
 }

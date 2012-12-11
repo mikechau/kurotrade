@@ -132,7 +132,7 @@ class TransactionsController < ApplicationController
               :broker => "Scottrade", #Manual / Future Drop Down menu?
               :input_method => "CSV", #2 options CSV or MANUAL
               :group_id => "1", #a test, set by page->cookie?
-              :user_id => "1" #a test, set by user.id->cookie?
+              :user_id => session[:user_id] #a test, set by user.id->cookie?
             )
         end #end_4
 

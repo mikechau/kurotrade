@@ -34,6 +34,7 @@ gem 'bcrypt-ruby', '~> 3.0.0'
 
 gem 'mechanize'
 gem 'therubyracer'
+gem 'font-awesome-rails'
 
 #gem "nvd3-rails", :git => "git@github.com:adeven/nvd3-rails.git", :submodules => true
 
