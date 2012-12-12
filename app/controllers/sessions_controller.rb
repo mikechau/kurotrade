@@ -15,6 +15,6 @@ class SessionsController < ApplicationController
 
   def destroy
     session[:user_id] = nil
-    redirect_to login_url, :flash => { :alert => "You are now logged out! Come back soon." }
+    redirect_to login_url, :flash => { :notice => "You are now logged out! Come back soon." }
   end
 end

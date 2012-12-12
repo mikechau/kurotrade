@@ -7,10 +7,10 @@ class StaticPagesController < ApplicationController
 	def index
 	end
 
-	def balance_exp
-		@transactions_initial = Transaction.order(:trade_date)
-		@transactions = @transactions_initial.where(:user_id => 1)
-	end
+	# def balance_exp
+	# 	@transactions_initial = Transaction.order(:trade_date)
+	# 	@transactions = @transactions_initial.where(:user_id => 1)
+	# end
 
   def mock_dashboard
 
@@ -21,7 +21,7 @@ class StaticPagesController < ApplicationController
     # transactions = transactions_initial.where(:group_id => 1)
 
 
-    if Time.now >= (Date.today.to_time+65000) 
+    #if Time.now >= (Date.today.to_time+65000) 
       # collect tickers into array
       tickers = []
       tickers_list = transactions.pluck(:stock_symbol).uniq
@@ -70,7 +70,7 @@ class StaticPagesController < ApplicationController
       end
     # else
     #   puts "NOT PULLING MARKET HISTORY"
-    end # end time check
+    #end # end time check
 
 
     ###########################################################
@@ -379,7 +379,16 @@ class StaticPagesController < ApplicationController
   def contact
   end
 
-  def testing
+  def welcome
+    render 'static_pages/boarding/welcome'
+  end
+
+  def new_partner
+    @group = Group.new
+    render 'static_pages/boarding/partner'
+  end
+
+  def new_individual
   end
 
 ######################

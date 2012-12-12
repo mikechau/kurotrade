@@ -74,7 +74,6 @@ body {
   margin-right: 10px;
 }
 
-
 /* LOGIN PAGE */
 
 .form-signin {
@@ -138,7 +137,7 @@ body {
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
-@media (max-width: 979px) {
+/*@media (max-width: 979px) {
 
   .carousel .item {
     height: 500px;
@@ -147,9 +146,9 @@ body {
     width: auto;
     height: 500px;
   }
-}
+}*/
 
-@media (max-width: 767px) {
+/*@media (max-width: 767px) {
 
   .carousel {
     margin-left: -20px;
@@ -180,4 +179,4 @@ body {
   .marketing .span4 + .span4 {
     margin-top: 40px;
   }
-}
+}*/

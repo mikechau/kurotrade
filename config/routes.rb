@@ -8,8 +8,11 @@ Kurotrade::Application.routes.draw do
   post "session" => 'sessions#create' 
   get "logout" => 'sessions#destroy', as: :logout
 
-  get '/balances', :to => 'static_pages#balance_exp'
-  get '/test', :to => 'static_pages#testing'
+  #get '/balances', :to => 'static_pages#balance_exp'
+  match '/boarding/welcome', :to => 'static_pages#welcome', as: :welcome
+  match '/boarding/partner', :to => 'static_pages#new_partner', as: :boarding_partner
+  match '/boarding/individual', :to => 'static_pages#new_individual', as: :boarding_individual
+
   get '/dashboard', :to => 'static_pages#mock_dashboard', as: :dashboard
   get '/about', :to => 'static_pages#about', as: :about
   get '/contact', :to => 'static_pages#contact', as: :contact
@@ -20,6 +23,7 @@ Kurotrade::Application.routes.draw do
   resources :portfolios
 
   resources :groups
+  match '/individual/new', :to => 'groups#new', :as => 'new_individual'
 
   resources :users
   

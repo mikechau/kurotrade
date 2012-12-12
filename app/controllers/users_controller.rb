@@ -60,7 +60,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         session[:user_id] = @user.id
-        format.html { redirect_to root_url, :flash => { :success => "Registration successful, hello <b>#{@user.name}</b> !".html_safe } } #change this redirect
+        format.html { redirect_to welcome_url, :flash => { :success => "Registration successful, hello <b>#{@user.name}</b> !".html_safe } } #change this redirect
         format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: "new" }

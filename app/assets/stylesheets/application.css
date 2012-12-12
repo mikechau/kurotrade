@@ -10,9 +10,9 @@
  *
  *= require_self
  *= require bootstrap.css
- *= require bootstrap-responsive.min.css
  *= require styles.css
  *= require 'font-awesome'
  *= require nv.d3.css
+ *= require bootstrap-responsive.min.css
  *= require_tree .
  */

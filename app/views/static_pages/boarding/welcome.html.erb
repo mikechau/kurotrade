@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <h1>Lets get started <%= current_user.name %>!</h1>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span12">
+      <div class="progress progress-success progress-striped active">
+        <div class="bar" style="width: 35%">35%</div>
+      </div>
+
+      <h2 class="well">Which of the following are you?</h2>
+      <div class="row">
+        <div class="span4 offset2 well">
+          <%= link_to 'Partner Investor', boarding_partner_url, :class => 'btn btn-large btn-block btn-primary' %><br/>
+          <p class="lead" style="text-align: justify">You run an investment group or are part of one. Investment group examples: investment clubs, general partnerships, LLC, you are part of an organization that pools money together to invest in stocks. This will take you a page to create your group.</p><br/><br/><br/>
+        </div>
+        <div class="span4 well">
+          <%= link_to 'Individual Investor', new_individual_url, :class => 'btn btn-large btn-block btn-primary' %><br/>
+          <p class="lead" style="text-align: justify">You are not part of any investment groups and are riding solo dolo. You can still create a portfolio and get the same functionality as a group. You can join or create a group at a later time as well. If you are a Partner Investor and are waiting to be added choose this option to create your personal portfolio.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
