@@ -1,0 +1,34 @@
+<%= form_for(@beta_user, :html => {:class => "form-horizontal"} ) do |f| %>
+  <% if @beta_user.errors.any? %>
+    <div id="error_explanation">
+      <h2 class="alert alert-error"><%= pluralize(@beta_user.errors.count, "error") %> detected:</h2>
+
+      <ul>
+      <% @beta_user.errors.full_messages.each do |msg| %>
+        <li style="color: #B94A48; font-weight: bold;"><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset>
+    <div class="control-group">
+      <%= f.label :email, class: "control-label" %>
+      <div class="controls">
+        <%= f.text_field :email %>
+      </div>
+    </div>
+    <%= f.hidden_field :category, :value => "beta_one" %>
+    <div class="control-group">
+      <%= f.label :name, class: "control-label" %>
+      <div class="controls">
+        <%= f.text_field :name %>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <%= f.submit "Submit", :class => "btn btn-large btn-primary" %>
+      </div>
+    </div>
+  </fieldset>
+<% end %>

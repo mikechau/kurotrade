@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @beta_user.name %>
+</p>
+
+<p>
+  <b>Email:</b>
+  <%= @beta_user.email %>
+</p>
+
+<p>
+  <b>Category:</b>
+  <%= @beta_user.category %>
+</p>
+
+
+<%= link_to 'Edit', edit_beta_user_path(@beta_user) %> |
+<%= link_to 'Back', beta_users_path %>

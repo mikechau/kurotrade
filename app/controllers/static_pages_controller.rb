@@ -391,5 +391,11 @@ class StaticPagesController < ApplicationController
   def new_individual
   end
 
+  def thanks
+  end
+
+  def features
+  end
+
 ######################
 end #class end

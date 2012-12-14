@@ -17,14 +17,20 @@ Kurotrade::Application.routes.draw do
   get '/about', :to => 'static_pages#about', as: :about
   get '/contact', :to => 'static_pages#contact', as: :contact
 
-  resources :transactions
+  resources :transactions, :to => 'static_pages#index'
   match '/transactions/file_upload', :to => 'transactions#scottrade_csv_parser', :as => 'transactions_upload'
 
-  resources :portfolios
+  resources :portfolios, :to => 'static_pages#index'
 
-  resources :groups
+  resources :groups, :to => 'static_pages#index'
   match '/individual/new', :to => 'groups#new', :as => 'new_individual'
 
+  resources :beta_users
+
+  match '/users/new', :to => 'beta_users#new', :as => 'new_user'
+  match '/beta', :to => 'beta_users#new', :as => 'new_user'
+  get '/thanks', :to => 'static_pages#thanks', as: :thanks
+  get '/features', :to => 'static_pages#features', as: :features
   resources :users
   
 end
